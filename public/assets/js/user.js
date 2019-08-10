@@ -1,3 +1,5 @@
+// import { resolvePtr } from "dns";
+
 $.ajax({
     type:'get',
     url:'/users',
@@ -22,6 +24,7 @@ $('#dataForm').on('submit', function() {
             userAry.push(result)
             render(userAry);
         }
+
     })
     return false;
 })
@@ -44,6 +47,7 @@ $('#avatar').on('change',function() {
         }
     })
 })
+
 //编辑用户功能/ 编辑用户功能 
 $('tbody').on('click','.edit',function(){
 
@@ -85,9 +89,101 @@ $('tbody').on('click','.edit',function(){
 });
 
 
-
 $('tbody').on('click','.edit',function() {
     $('#email').val($(this).parents('tr').children('td').eq(2).text());
     $('#nickName').val($(this).parents('tr').children('td').eq(3).text());
     
 })
+
+//删除功能
+$('tbody').on('click','.delete',function(){
+    //弹窗提示
+    if(confirm('确定删除吗')){
+        var id = $(this).parent().attr('data-id');
+        //console.log(id)
+        $.ajax({
+            type: 'delete',
+            url: '/users/'+id,
+            success:function(res){
+           
+            }
+        })
+    }
+})
+
+  //获取批量删除按钮
+ 
+//全选功能
+$('#selectAll').on('change',function(){
+    //获取当前按钮的状态
+    let status = $(this).prop('checked');
+
+  
+    //批量删除按钮的显示和隐藏
+    if(status){
+        $('.btn-sm').show();
+    }else{
+        $('.btn-sm').hide();
+    }
+    //把当前按钮的状态给所有的子项
+    $('#userBox').find('input').prop('checked',status);
+
+})
+//给下方的复选框注册点击事件
+$('tbody').on('click','input',function(){
+    //如果下方复选框的个数，等于其下面被选中复选框个数，代表都被选中,那么久改变全选框
+    if($('tbody input').length == $('tbody input:checked').length){
+        $('thead input').prop('checked',true);
+    }else{
+        $('this input').prop('checked',false);
+    }
+
+
+
+})
+
+//当用户复选框状态发生改变
+$('.userBox').on('change','userStatus',function(){
+    var inputs = $('#userBox').find('input');
+    if(inputs.length == inputs.fliter(':checked').length){
+        alert('所有用户都被选中');
+    }else{
+        alert('不是所有用户都被选中')
+    }
+})
+
+//给批量删除按钮注册点击事件
+$('.btn-sm').on('click',function(){
+    var ids = [];
+    // 想要获取被选中的元素的id属性值 
+    var checkUser = $('tbody input:checked');
+    // 对checkUser对象进行遍历
+    checkUser.each(function (k, v) {
+      var id = v.parentNode.parentNode.children[6].getAttribute('data-id');
+      ids.push(id);
+    });
+
+    // 发送ajax
+    $.ajax({
+      type: 'delete',
+      url: '/users/' + ids.join('-'),
+      success: function (res) {
+        // res是这一个数组 数组里面放的被删除的元素 元素是一个对象 
+        // res.forEach(e => {
+        //   var index = userArr.findIndex(item => item._id == e._id);
+        //   // 调用splice()
+        //   userArr.splice(index, 1);
+        //   render(userArr);
+        // })
+
+        location.reload();
+
+      }
+    })
+
+})
+
+
+
+
+

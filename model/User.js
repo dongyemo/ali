@@ -7,6 +7,7 @@ const Joi = require('joi');
 // hash密码
 const bcrypt = require('bcrypt');
 
+
 // 用户集合规则
 const UserSchema = new Schema({
 	// 昵称
